@@ -5,7 +5,7 @@ use Data::Dumper;
 
 my $self;
 
-sub instance
+sub instance ($;)
 {
 	my $class = ref($_[0])||$_[0];
 	$self ||= bless({}, $class);
@@ -13,7 +13,7 @@ sub instance
 	return $self;
 }
 
-sub start
+sub start ($;)
 {
 	my ($self) = @_;
 

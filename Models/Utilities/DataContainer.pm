@@ -4,19 +4,36 @@ use strict;
 
 my $self;
 
-sub instance
+sub instance ($;)
 {
 	my $class = ref($_[0])||$_[0];
-	$self ||= bless({}, $class);
+
+	$self ||= bless(
+		{'params' =>
+			{
+			'nextPage' => undef,
+			'errors' => {}
+			}
+		}, $class);
 
 	return $self;
 }
 
-sub start
+sub setParams ($$;$)
+{
+	my ($self, $nextPage, $errors) = @_;
+
+	$self->{params}{nextPage} = $nextPage;
+	$self->{params}{errors} = $errors;
+
+	return $self;
+}
+
+sub getParams ($;)
 {
 	my ($self) = @_;
 
-	return $ENV{'REQUEST_URI'};
+	return $self->{params};
 }
 
 1;
