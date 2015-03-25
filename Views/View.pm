@@ -1,10 +1,11 @@
 package Views::View;
 
 use strict;
+use Data::Dumper;
 
 use Models::Utilities::DataContainer;
 use Models::Utilities::File;
-use Views::Substitutors::IndexSubstitutor;
+use Views::Substitutor;
 
 sub new ($;)
 {
@@ -25,11 +26,13 @@ sub show ($;)
 
 	print "Content-type:text/html;encoding=utf-8\n\n";
 
+	print Dumper($dataContainer);
+
 	#$| = 1;
 
 	#ReadParse();
 
-	print Views::Substitutors::IndexSubstitutor->new($htmlString)->substitute();
+	print Views::Substitutor->new($htmlString)->substitute();
 }
 
 1;

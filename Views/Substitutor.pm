@@ -1,4 +1,4 @@
-package Views::Substitutors::IndexSubstitutor;
+package Views::Substitutor;
 
 use strict;
 

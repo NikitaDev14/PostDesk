@@ -9,11 +9,7 @@ sub instance ($;)
 	my $class = ref($_[0])||$_[0];
 
 	$self ||= bless(
-		{'params' =>
-			{
-			'nextPage' => undef,
-			'errors' => {}
-			}
+		{'params' => {}
 		}, $class);
 
 	return $self;
@@ -21,10 +17,9 @@ sub instance ($;)
 
 sub setParams ($$;$)
 {
-	my ($self, $nextPage, $errors) = @_;
+	my ($self, $params) = @_;
 
-	$self->{params}{nextPage} = $nextPage;
-	$self->{params}{errors} = $errors;
+	$self->{params} = $params;
 
 	return $self;
 }

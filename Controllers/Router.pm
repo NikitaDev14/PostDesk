@@ -21,13 +21,15 @@ sub start ($;)
 
 	opendir (DIR, "Controllers/PageControllers/");
 
-	my @files = grep{/$url[2]\w+.pm/i} readdir(DIR);
+	my @files = grep{/^$url[2]Controller.pm$/i} readdir(DIR);
 
-	if(@files == undef || $url[2] == undef) {
+	#print "Content-type:text/html;encoding=utf-8\n\n";
+
+	#print Dumper($files[0]);
+
+	if($files[0] eq undef || $url[2] eq undef) {
 		$files[0] = 'IndexController.pm';
 	}
-
-	#print Dumper(@files);
 
 	my $controller = 'Controllers/PageControllers/'.substr($files[0], 0, -3);
 
@@ -37,7 +39,7 @@ sub start ($;)
 
 	$controller =~ s/\//'::'/ge;
 
-	return $controller->new();
+	return $controller->new($url[3]);
 }
 
 1;

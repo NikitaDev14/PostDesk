@@ -1,6 +1,9 @@
 package Views::Pallets::FirstPallet;
 
+our @ISA = qw(BasePallet);
+
 use strict;
+use Views::Pallets::BasePallet;
 
 sub new ($$;)
 {
@@ -18,8 +21,9 @@ sub change ($;)
 
 	my %hash = (
 		'abc' => 'index',
-		'def' => 'page'
-		);
+		'def' => 'page',
+		'qwe' => 'category',
+	);
 
 	$this->{template} =~ s/%(\w+)%/$hash{$1}/ge;
 
