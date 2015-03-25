@@ -32,7 +32,7 @@ sub show ($;)
 
 	#ReadParse();
 
-	print Views::Substitutor->new($htmlString)->substitute();
+	print Views::Substitutor->new($htmlString, $dataContainer->{nextPage}, $dataContainer->{content})->substitute();
 }
 
 1;

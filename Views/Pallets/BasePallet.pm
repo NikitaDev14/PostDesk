@@ -2,7 +2,7 @@ package Views::Pallets::BasePallet;
 
 use strict;
 
-sub new($$;);
+sub new($$$;);
 
 sub change($;);
 
