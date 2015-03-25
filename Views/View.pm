@@ -24,9 +24,9 @@ sub show ($;)
 
 	my $fileOperator = Models::Utilities::File->instance($headerFile);
 	my $header = $fileOperator->loadTemplate();
-	
+
 	$fileOperator = Models::Utilities::File->instance($templateFile);
-	
+
 	my $template = $fileOperator->loadTemplate();
 
 	print "Content-type:text/html;encoding=utf-8\n\n";

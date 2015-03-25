@@ -1,11 +1,11 @@
-#!/usr/bin/perl
+#!"C:\xampp\perl\bin\perl.exe"
 
 use CGI qw(:cgi-lib:escapeHTML:unescapeHTML);
+use warnings;
 use CGI::Carp qw(fatalsToBrowser);
 use strict;
-use warnings;
-use Data::Dumper;
 
+use config;
 use Controllers::Router;
 use Views::View;
 

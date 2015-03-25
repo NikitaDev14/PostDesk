@@ -4,6 +4,9 @@ our @ISA = qw(BasePallet);
 
 use strict;
 use Views::Pallets::BasePallet;
+use Models::Interfaces::Database;
+use config;
+use Data::Dumper;
 
 sub new ($$$;)
 {
@@ -11,10 +14,18 @@ sub new ($$$;)
 
 	my $class = ref($proto) || $proto;
 	my $this->{template} = $template;
+
 	$this->{content} = $content;
 
 	return bless($this, $class);
 }
+
+my $createList = sub ($$;)
+{
+	my ($this, $tag) = @_;
+
+	print Dumper(Models::Interfaces::Database->new(%config::config)->connect()->getCategories()->execute()->getResult());
+};
 
 sub change ($;)
 {
@@ -28,7 +39,11 @@ sub change ($;)
 
 	$this->{template} =~ s/%(\w+)%/$hash{$1}/ge;
 
+	$this->$createList('<li>');
+
 	return $this->{template};
 }
+
+
 
 1;

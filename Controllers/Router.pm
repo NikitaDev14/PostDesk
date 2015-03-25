@@ -21,13 +21,15 @@ sub start ($;)
 
 	opendir (DIR, "Controllers/PageControllers/");
 
-	my @files = grep{/^$url[4]Controller.pm$/i} readdir(DIR);
+	my @files = grep{/^$url[2]Controller.pm$/i} readdir(DIR);
+
+	#!important: on home server $url[2], on GFL server $url[4]
 
 	#print "Content-type:text/html;encoding=utf-8\n\n";
 
 	#print Dumper($files[0]);
 
-	if($files[0] eq undef || $url[4] eq undef) {
+	if($files[0] eq undef || $url[2] eq undef) {
 		$files[0] = 'IndexController.pm';
 	}
 
@@ -39,7 +41,7 @@ sub start ($;)
 
 	$controller =~ s/\//'::'/ge;
 
-	return $controller->new($url[5]);
+	return $controller->new($url[3]);
 }
 
 1;
