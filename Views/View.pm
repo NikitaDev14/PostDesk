@@ -33,7 +33,7 @@ sub show ($;)
 
 	print Dumper($dataContainer);
 
-	#$| = 1;
+	$| = 1;
 
 	#ReadParse();
 

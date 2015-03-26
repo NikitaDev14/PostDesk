@@ -22,7 +22,7 @@ sub run ($;)
 
 	my $dataContainer = Models::Utilities::DataContainer->instance();
 
-	$dataContainer->setParams({'nextPage' => 'categories', 'content' => $this->{category}});
+	$dataContainer->setParams({'nextPage' => 'category', 'content' => $this->{category}});
 }
 
 1;

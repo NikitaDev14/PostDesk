@@ -2,6 +2,7 @@ package Models::Interfaces::Database;
 
 use strict;
 use DBI;
+use Data::Dumper;
 
 sub new
 {
@@ -20,86 +21,76 @@ sub new
 sub connect
 {
 	my ($this) = @_;
+	
 	$this->{connection} = DBI->connect("DBI:mysql:$this->{db}:$this->{host}", $this->{user}, $this->{pass});
-	#print($this->{connection});
 
 	return $this;
 }
-sub getResult
+my $execute = sub ($;)
 {
 	my ($this) = @_;
+	
+	$this->{sth} = $this->{connection}->prepare($this->{query});
+	
+	($this->{params} eq undef)? $this->{cnt} = $this->{sth}->execute() : $this->{cnt} = $this->{sth}->execute($this->{params});
+	
+};
+my $getResult = sub ($;)
+{
+	my ($this) = @_;
+	
 	my $ref;
-
+	
 	while($ref = $this->{sth}->fetchrow_hashref())
 	{
 		push(@{$this->{result}}, $ref);
 	}
-
+	
 	return $this->{result};
-}
-sub execute
+};
+sub getCategories ($;)
 {
 	my ($this) = @_;
 
-	$this->{sth} = $this->{connection}->query($this->{query});
-
-	return $this;
+	$this->{query} = "SELECT Name FROM categories;";
+	
+	$this->$execute();
+	return $this->$getResult();
 }
-sub DESTROY
+sub getSubcategories ($$;)
 {
-	my ($this) = @_;
-	$this->{connection}->disconnect();
+	my ($this, $category) = @_;
+	
+	$this->{query} = "SELECT Name FROM subcategories WHERE idCategory = (SELECT idCategory FROM categories WHERE Name = ?);";
+	$this->{params} = $category;
+	$this->$execute();
+	
+	return $this->$getResult();
 }
-
-sub setUser
+sub getPosts ($$;)
 {
-	my ($this, $id, $name, $second_name,  $password, $email, $phone, $adress) = @_;
-	my $query = "call insert_new_user($id, $name, $second_name, $password, $email, $phone, $adress)";
-	$this->{query} = $query;
-	return 1;
+	my ($this, $subcategory) = @_;
+	
+	$this->{query} = "SELECT posts.idPost, posts.Text FROM posts WHERE isHidden = 0 AND posts.idSubcategory = (SELECT idSubcategory FROM subcategories WHERE Name = ?)";
+	$this->{params} = $subcategory;
+	$this->$execute();
+	
+	return $this->$getResult();
 }
-
-sub setPost
+sub getOnePost ($$;)
 {
-	my ($this, $id, $user_id, $category_id, $sub_category_id, $title, $description, $price) = @_;
-	my $query = "call insert_new_post($id, $user_id, $category_id, $sub_category_id, $title, $description, $price)";
-	$this->{query} = $query;
-	return 1;
+	my ($this, $Idpost) = @_;
+	
+	$this->{query} =
+		"SELECT posts.idPost, posts.Text, posts.idUser,
+					users.FirstName, users.SurName, users.Phone
+		FROM posts 
+		INNER JOIN users ON posts.idUser = users.idUser
+		WHERE posts.idPost = ?";
+	$this->{params} = $Idpost;
+	$this->$execute();
+	
+	return $this->$getResult();
 }
-
-sub getAllCategoryPosts
-{
-	my ($this, $idCat) = @_;
-	my $query = "call select_all_posts_category($idCat)";
-	$this->{query} = $query;
-	return 1;
-}
-
-sub getOnePost
-{
-	my ($this, $idPost) = @_;
-	my $query = "call select_one_post($idPost)";
-	$this->{query} = $query;
-	return 1;
-}
-
-sub getCategories
-{
-	my ($this) = @_;
-	my $query = "CALL getCategories()";
-
-	$this->{query} = $query;
-
-	return $this;
-}
-
-sub getAllSubCategories
-{
-	my ($this, $idMainCat) = @_;
-	my $query = "call select_sub_category($idMainCat)";
-	$this->{query} = $query;
-	return 1;
-}
-
 
 1;

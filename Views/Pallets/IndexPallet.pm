@@ -20,11 +20,19 @@ sub new ($$$;)
 	return bless($this, $class);
 }
 
-my $createList = sub ($$;)
+my $createList = sub ($;)
 {
-	my ($this, $tag) = @_;
+	my ($this) = @_;
 
-	print Dumper(Models::Interfaces::Database->new(%config::config)->connect()->getCategories()->execute()->getResult());
+	my $catList = Models::Interfaces::Database->new(%config::config)->connect()->getCategories();
+	my $list;
+
+	foreach(@{$catList})
+	{
+		$list .= '<li><a href="/~user10/perl/PostDesk/cat/'.$_->{Name}.'">' . $_->{Name} . '</a></li>';
+	}
+	
+	return $list;
 };
 
 sub change ($;)
@@ -34,7 +42,7 @@ sub change ($;)
 	my %hash = (
 		'abc' => 'index',
 		'def' => 'page',
-		'qwe' => 'category',
+		'categories' => $this->$createList()
 	);
 
 	$this->{template} =~ s/%(\w+)%/$hash{$1}/ge;
