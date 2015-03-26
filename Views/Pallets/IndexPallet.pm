@@ -39,7 +39,7 @@ sub change ($;)
 
 	$this->{template} =~ s/%(\w+)%/$hash{$1}/ge;
 
-	$this->$createList('<li>');
+	#$this->$createList('<li>');
 
 	return $this->{template};
 }
