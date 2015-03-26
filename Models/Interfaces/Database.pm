@@ -67,6 +67,7 @@ sub getSubcategories ($$;)
 	
 	return $this->$getResult();
 }
+
 sub getPosts ($$;)
 {
 	my ($this, $subcategory) = @_;
@@ -77,6 +78,7 @@ sub getPosts ($$;)
 	
 	return $this->$getResult();
 }
+
 sub getOnePost ($$;)
 {
 	my ($this, $Idpost) = @_;
@@ -88,6 +90,23 @@ sub getOnePost ($$;)
 		INNER JOIN users ON posts.idUser = users.idUser
 		WHERE posts.idPost = ?";
 	$this->{params} = $Idpost;
+	$this->$execute();
+	
+	return $this->$getResult();
+}
+
+sub getUser ($$$;)
+{
+	my ($this, $useremail, $userpassword) = @_;
+	
+	$this->{query} =
+		"SELECT COUNT(idUser) FROM users WHERE Email= ? AND Password = ?";
+	$this->{params} = ();
+	
+	push(@{$this->{params}}, $useremail);
+	push(@{$this->{params}}, $userpassword);
+	
+	
 	$this->$execute();
 	
 	return $this->$getResult();

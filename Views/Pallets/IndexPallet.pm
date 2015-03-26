@@ -4,7 +4,7 @@ our @ISA = qw(BasePallet);
 
 use strict;
 use Views::Pallets::BasePallet;
-use Models::Interfaces::Database;
+#use Models::Interfaces::Database;
 use config;
 use Data::Dumper;
 
@@ -42,7 +42,7 @@ sub change ($;)
 	my %hash = (
 		'abc' => 'index',
 		'def' => 'page',
-		'categories' => $this->$createList()
+		#'categories' => $this->$createList()
 	);
 
 	$this->{template} =~ s/%(\w+)%/$hash{$1}/ge;

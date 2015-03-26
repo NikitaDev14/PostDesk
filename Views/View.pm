@@ -20,6 +20,7 @@ sub show ($;)
 
 	my $dataContainer = Models::Utilities::DataContainer->instance()->getParams();
 	my $headerFile = 'Resources/html/HeaderLoggedOut.html';
+
 	my $templateFile = 'Resources/html/'.$dataContainer->{nextPage}.'.html';
 
 	my $fileOperator = Models::Utilities::File->instance($headerFile);
@@ -29,7 +30,7 @@ sub show ($;)
 
 	my $template = $fileOperator->loadTemplate();
 
-	print "Content-type:text/html;encoding=utf-8\n\n";
+	#print "Content-type:text/html;encoding=utf-8\n\n";
 
 	print Dumper($dataContainer);
 
