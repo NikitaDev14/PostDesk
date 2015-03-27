@@ -33,7 +33,6 @@ my $execute = sub ($;)
 	$this->{sth} = $this->{connection}->prepare($this->{query});
 	
 	($this->{params} eq undef)? $this->{cnt} = $this->{sth}->execute() : $this->{cnt} = $this->{sth}->execute($this->{params});
-	
 };
 my $getResult = sub ($;)
 {
@@ -106,10 +105,63 @@ sub getUser ($$$;)
 	push(@{$this->{params}}, $useremail);
 	push(@{$this->{params}}, $userpassword);
 	
+	$this->$execute();
+	
+	return $this->$getResult();
+}
+
+sub addUser ($$$$$$;)
+{
+	my ($this, $firstName, $surName, $phone, $email, $pass) = @_;
+	
+	$this->{query} = "INSERT INTO users(FirstName, SurName, Phone, Email, Password)
+		VALUES(?, ? ,? ,?, ?)";
+		
+	$this->{params} = ();
+	
+	push(@{$this->{params}}, $firstName);
+	push(@{$this->{params}}, $surName);
+	push(@{$this->{params}}, $phone);
+	push(@{$this->{params}}, $email);
+	push(@{$this->{params}}, $pass);
 	
 	$this->$execute();
 	
 	return $this->$getResult();
+}
+sub getAllCategories ($;)
+{
+	my ($this) = @_;
+	
+	$this->{query} =
+	"SELECT 
+		categories.idCategory, categories.Name as cat_name,
+		GROUP_CONCAT( DISTINCT subcategories.idSubcategory) AS idsub,
+		GROUP_CONCAT( DISTINCT subcategories.Name) AS subcat_name
+	FROM categories
+		INNER JOIN subcategories ON categories.idCategory = subcategories.idCategory
+	GROUP BY categories.idCategory";
+	
+	$this->$execute();
+	
+	my @temp = ($this->$getResult())[0];
+	my $n  = @temp;
+	my @result;
+	
+	#print Dumper($n);
+	
+	foreach(@temp)
+	{
+		print Dumper($_);
+		#push(@result, $_{cat_name});
+		
+		#foreach my $subcat($cat)
+		#{
+		#	print Dumper($subcat);
+	#	}
+	}
+	
+	#print Dumper(@result);
 }
 
 1;

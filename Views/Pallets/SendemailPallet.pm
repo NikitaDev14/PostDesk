@@ -1,10 +1,11 @@
-package Views::Pallets::PostPallet;
+package Views::Pallets::SendemailPallet;
 
 our @ISA = qw(BasePallet);
 
 use strict;
 use Views::Pallets::BasePallet;
 use Models::Interfaces::Database;
+use Models::Validators::EmailFormValidator;
 use config;
 use Data::Dumper;
 
@@ -24,16 +25,15 @@ sub change ($;)
 {
 	my ($this) = @_;
 	
+	my $validator = Models::Validators::EmailFormValidator->instance();
 	my $post = Models::Interfaces::Database->new(%config::config)->connect()->getOnePost($this->{post});
 	
 	#print Dumper($post->[0]);
 
 	my %hash = (
-		'Text' => $post->[0]{Text},
-		'FirstName' => $post->[0]{FirstName},
-		'Surname' => $post->[0]{SurName},
-		'Phone' => $post->[0]{Phone},
-		'href' => '/~user10/perl/PostDesk/email/' . $post->[0]{idUser}
+		'emailFrom' => $validator->getEmailFrom(),
+		'content' => $validator->getTextMassege(),
+		'action' => '/~user10/perl/PostDesk/sendemail/' . $post->[0]{idUser}
 	);
 
 	$this->{template} =~ s/%(\w+)%/$hash{$1}/ge;

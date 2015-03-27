@@ -1,12 +1,11 @@
 package Models::Interfaces::Email;
 
 use strict;
-use CGI;
-use Email::MIME;
-use Email::Valid;
-use Email::Sender::Simple qw(sendmail);
-use Models::Interfaces::Database;
 
+use Models::Interfaces::Database;
+use Models::Email::MIME;
+use Models::Email::Valid;
+use Models::Sender::lib::Email::Sender::Simple qw(sendmail);
 sub instance
 {
 	my $class = ref($_[0])||$_[0];
@@ -17,15 +16,12 @@ sub instance
 
 sub sendMessage
 {
-	my $cgi = new CGI;
-	my $mailFrom = $cgi->param('email_address');
-	my $feedback = $cgi->param('feedback');
-	my $userid = $cgi->param('userid');
-	my $mailTo = Models::Interfaces::Database->getUserMail($userid);
+	my ($self, $mailFrom, $text, $userId) = @_;
+	my $mailTo = Models::Interfaces::Database->getUserMail($userId);
 	
-	if(Email::Valid->address("$mailFrom") && (length $feedback) > 15 && $mailTo)
+	if(Models::Email::Valid>address("$mailFrom") && (length $text) > 15 && $mailTo)
 	{
-		my $message = Email::MIME->create(
+		my $message =  Models::Email::MIME->create(
 			header_str => [
 				From    => "$mailFrom",
 				To      => "$mailTo",

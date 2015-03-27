@@ -32,9 +32,7 @@ sub substitute ($;)
 
 	$pallet =~ s/\//'::'/ge;
 	
-	my $template = $pallet->new($this->{template}, $this->{content})->change();
-	
-	return $template;
+	return $pallet->new($this->{template}, $this->{content})->change();
 }
 
 1;

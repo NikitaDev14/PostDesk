@@ -1,4 +1,4 @@
-#!"C:\xampp\perl\bin\perl.exe"
+#!/usr/bin/perl -w
 
 use CGI qw(:cgi-lib:escapeHTML:unescapeHTML);
 use warnings;
@@ -12,10 +12,16 @@ use Views::View;
 use Models::Interfaces::Database;
 use Models::Interfaces::Http;
 
+use Models::Interfaces::Email;
+
 print "Content-type:text/html;encoding=utf-8\n\n";
 
-print Dumper(Models::Interfaces::Http->instance()->readForm()->getParams());
+#print Dumper(Models::Interfaces::Http->instance()->readForm()->getParams());
 
-Controllers::Router->instance()->start()->run();
+#Models::Interfaces::Database->new(%config::config)->connect()->getAllCategories();
 
-Views::View->new()->show();
+#Controllers::Router->instance()->start()->run();
+
+#Views::View->new()->show();
+
+Models::Interfaces::Email->instance()->sendMessage('mykytababych1989@hmail.com', 'qwe', 1);
