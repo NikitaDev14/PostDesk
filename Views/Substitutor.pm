@@ -31,7 +31,7 @@ sub substitute ($;)
 	require $pallet.'.pm';
 
 	$pallet =~ s/\//'::'/ge;
-	
+
 	return $pallet->new($this->{template}, $this->{content})->change();
 }
 

@@ -32,7 +32,7 @@ my $execute = sub ($;)
 	
 	$this->{sth} = $this->{connection}->prepare($this->{query});
 	
-	($this->{params} eq undef)? $this->{cnt} = $this->{sth}->execute() : $this->{cnt} = $this->{sth}->execute($this->{params});
+	($this->{params} eq undef)? $this->{sth}->execute() : $this->{sth}->execute($this->{params});
 };
 my $getResult = sub ($;)
 {
@@ -99,11 +99,43 @@ sub getUser ($$$;)
 	my ($this, $useremail, $userpassword) = @_;
 	
 	$this->{query} =
-		"SELECT COUNT(idUser) FROM users WHERE Email= ? AND Password = ?";
+		"SELECT idUser FROM users WHERE Email= ? AND Password = ?";
 	$this->{params} = ();
 	
 	push(@{$this->{params}}, $useremail);
 	push(@{$this->{params}}, $userpassword);
+	
+	$this->$execute();
+	
+	return $this->$getResult();
+}
+
+sub getProfile ($$;)
+{
+	my ($this, $idUser) = @_;
+
+	$this->{query} = 
+		"SELECT FirstName, SurName, Phone, Email FROM users WHERE idUser = ?";
+
+	$this->{params} = ();
+	
+	push(@{$this->{params}}, $idUser);
+	
+	$this->$execute();
+	
+	return $this->$getResult();
+}
+
+sub getPostsOfProfile ($$;)
+{
+	my ($this, $idUser) = @_;
+
+	$this->{query} = 
+		"SELECT Text, isHidden FROM posts WHERE idUser = ?";
+
+	$this->{params} = ();
+	
+	push(@{$this->{params}}, $idUser);
 	
 	$this->$execute();
 	
@@ -129,39 +161,16 @@ sub addUser ($$$$$$;)
 	
 	return $this->$getResult();
 }
-sub getAllCategories ($;)
+sub getAllSubcategories ($;)
 {
 	my ($this) = @_;
 	
 	$this->{query} =
-	"SELECT 
-		categories.idCategory, categories.Name as cat_name,
-		GROUP_CONCAT( DISTINCT subcategories.idSubcategory) AS idsub,
-		GROUP_CONCAT( DISTINCT subcategories.Name) AS subcat_name
-	FROM categories
-		INNER JOIN subcategories ON categories.idCategory = subcategories.idCategory
-	GROUP BY categories.idCategory";
+	"SELECT Name FROM subcategories";
 	
 	$this->$execute();
-	
-	my @temp = ($this->$getResult())[0];
-	my $n  = @temp;
-	my @result;
-	
-	#print Dumper($n);
-	
-	foreach(@temp)
-	{
-		print Dumper($_);
-		#push(@result, $_{cat_name});
-		
-		#foreach my $subcat($cat)
-		#{
-		#	print Dumper($subcat);
-	#	}
-	}
-	
-	#print Dumper(@result);
+
+	return $this->$getResult();
 }
 
 1;

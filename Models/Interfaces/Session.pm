@@ -4,18 +4,23 @@ use strict;
 use CGI::Session;
 use CGI;
 use Models::Interfaces::Database;
+
 my $self;
 
 sub instance
 {
 	my $class = ref($_[0])||$_[0];
-	$self ||= bless({}, $class);
+	$self ||= bless(
+	{
+		'params' => undef
+	}, $class);
 
 	return $self;
 }
-
-sub _session_start
+sub sessionStart
 {
+	my ($self, $user, $ip) = @_;
+
 	my $cgi = new CGI;
 	my $session = new CGI::Session(undef, $cgi, {Directory=>'/tmp'});
 	
@@ -25,7 +30,7 @@ sub _session_start
     }
 
     my $user_mail = $cgi->param("user_mail ") or return;
-    my $user_pass=$cgi->param("user_pass") or return;
+    my $user_pass = $cgi->param("user_pass") or return;
 
     # if we came this far, user did submit the login form
     # so let's try to load his/her profile if name/psswds match
@@ -36,8 +41,13 @@ sub _session_start
         return 1;
     }
 }
+sub getParams
+{
+	my ($self) = @_;
 
-sub _load_profile
+	return $self->{params};
+}
+sub load_profile
 {
     my ($user_mail, $user_pass) = @_;
 
@@ -51,8 +61,7 @@ sub _load_profile
 		return 1;
 	}
 }
-
-sub _session_destroy
+sub sessionDestroy
 {
 	my $session = CGI::Session->load() ;
 	$session->clear(["~logged-in"]);

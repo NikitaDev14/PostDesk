@@ -6,6 +6,8 @@ use Data::Dumper;
 use Models::Utilities::DataContainer;
 use Models::Utilities::File;
 use Views::Substitutor;
+use Models::Interfaces::Session;
+use Models::Validators::SessionValidator;
 
 sub new ($;)
 {
@@ -19,7 +21,17 @@ sub show ($;)
 	my ($this) = @_;
 
 	my $dataContainer = Models::Utilities::DataContainer->instance()->getParams();
-	my $headerFile = 'Resources/html/HeaderLoggedOut.html';
+	my $session = Models::Validators::SessionValidator->instance();
+	my $headerFile;
+
+	if($dataContainer->{nextPage} ne 'login')
+	{
+		$headerFile = 'Resources/html/HeaderLoggedOut.html';
+	}
+	if($session->isValidSession($dataContainer->{content}, $ENV{REMOTE_ADDR}) ne undef)
+	{
+		$headerFile = 'Resources/html/HeaderLoggedIn.html';
+	}
 
 	my $templateFile = 'Resources/html/'.$dataContainer->{nextPage}.'.html';
 
@@ -30,7 +42,7 @@ sub show ($;)
 
 	my $template = $fileOperator->loadTemplate();
 
-	#print "Content-type:text/html;encoding=utf-8\n\n";
+	print "Content-type:text/html;encoding=utf-8\n\n";
 
 	print Dumper($dataContainer);
 
