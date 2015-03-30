@@ -9,7 +9,7 @@ use Models::Utilities::DataContainer;
 use Models::Interfaces::Database;
 use Models::Interfaces::Http;
 use Models::Validators::LoginFormValidator;
-use Models::Interfaces::Session;
+#use Models::Interfaces::Session;
 use Data::Dumper;
 
 sub new ($$;)
@@ -43,16 +43,16 @@ sub run ($;)
 
 		my $result = $validator->isValidForm();
 
-		if($result eq undef)
+		if (!@$result)
 		{
 			$nextPage = 'login';
 			$content = 'login';
 		}
 		else
 		{
-			Models::Interfaces::Session->instance()->sessionStart($result, $ENV{REMOTE_ADDR});
+			#Models::Interfaces::Session->instance()->sessionStart($result, $ENV{REMOTE_ADDR});
 			$nextPage = 'profile';
-			$content = $result;
+			$content = @$result[0]->{idUser};
 		}
 	}
 

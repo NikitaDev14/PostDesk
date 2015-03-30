@@ -42,7 +42,7 @@ sub change ($;)
 	my %hash = (
 		'abc' => 'index',
 		'def' => 'page',
-		#'categories' => $this->$createList()
+		'categories' => $this->$createList()
 	);
 
 	$this->{template} =~ s/%(\w+)%/$hash{$1}/ge;

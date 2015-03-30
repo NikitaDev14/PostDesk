@@ -13,6 +13,7 @@ sub new
 		'db' => $params{DB_NAME},
 		'user' => $params{DB_USER},
 		'pass' => $params{DB_PASS},
+		'params' => [],
 		'result'=> []
 	};
 
@@ -32,7 +33,9 @@ my $execute = sub ($;)
 	
 	$this->{sth} = $this->{connection}->prepare($this->{query});
 	
-	($this->{params} eq undef)? $this->{sth}->execute() : $this->{sth}->execute($this->{params});
+	(@{$this->{params}})
+		?  $this->{sth}->execute(@{$this->{params}})
+		: $this->{sth}->execute();
 };
 my $getResult = sub ($;)
 {
@@ -51,9 +54,10 @@ sub getCategories ($;)
 {
 	my ($this) = @_;
 
-	$this->{query} = "SELECT Name FROM categories;";
+	$this->{query} = "SELECT Name FROM categories";
 	
 	$this->$execute();
+	
 	return $this->$getResult();
 }
 sub getSubcategories ($$;)
@@ -88,6 +92,7 @@ sub getOnePost ($$;)
 		FROM posts 
 		INNER JOIN users ON posts.idUser = users.idUser
 		WHERE posts.idPost = ?";
+		
 	$this->{params} = $Idpost;
 	$this->$execute();
 	
@@ -99,7 +104,7 @@ sub getUser ($$$;)
 	my ($this, $useremail, $userpassword) = @_;
 	
 	$this->{query} =
-		"SELECT idUser FROM users WHERE Email= ? AND Password = ?";
+		"SELECT idUser FROM users WHERE Email = ? AND Password = ?";
 	$this->{params} = ();
 	
 	push(@{$this->{params}}, $useremail);

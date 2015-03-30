@@ -3,6 +3,7 @@ package Models::Validators::LoginFormValidator;
 use strict;
 use Models::Interfaces::Database;
 use config;
+use Data::Dumper;
 
 my $self;
 
@@ -19,14 +20,14 @@ sub setParams ($$;)
 	my ($self, $form) = @_;
 
 	$self->{email} = $form->{email};
-	$self->{pass} = $form->{pass};
+	$self->{pass} = $form->{password};
 
 	return $self;
 }
 sub isValidForm ($;)
 {
 	my ($self) = @_;
-
+	
 	return Models::Interfaces::Database->new(%config::config)->connect()->getUser($self->{email}, $self->{pass});
 }
 1;

@@ -1,4 +1,4 @@
-#!"C:\xampp\perl\bin\perl.exe"
+#!/usr/bin/perl -w
 
 use CGI qw(:cgi-lib:escapeHTML:unescapeHTML);
 use warnings;
@@ -12,7 +12,7 @@ use Views::View;
 
 #use Models::Interfaces::Email;
 
-#print "Content-type:text/html;encoding=utf-8\n\n";
+print "Content-type:text/html;encoding=utf-8\n\n";
 
 #print Dumper(Models::Interfaces::Http->instance()->readForm()->getParams());
 

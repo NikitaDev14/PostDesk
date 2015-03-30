@@ -26,13 +26,13 @@ my $createList = sub ($;)
 
 	my $postList = Models::Interfaces::Database->new(%config::config)->connect()->getPostsOfProfile($this->{user});
 	my $list;
-	
-	#print Dumper($catList);
 
-	foreach(@{$catList})
+	foreach(@{$postList})
 	{
 		$list .= '<li>' . $_->{Text} . ' Hidden' . $_->{isHidden} . '</li>';
 	}
+	
+	#print Dumper($postList);
 	
 	return $list;
 };
