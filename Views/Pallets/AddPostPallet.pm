@@ -29,7 +29,7 @@ my $createList = sub ($;)
 
 	foreach(@{$catList})
 	{
-		$list .= '<option>' . $_->{Name} . '</option>';
+		$list .= '<option value=' . $_->{idSubcategory} . '>' . $_->{Name} . '</option>';
 	}
 	
 	return $list;
@@ -38,10 +38,13 @@ my $createList = sub ($;)
 sub change ($;)
 {
 	my ($this) = @_;
+	
+	my $session = Models::Interfaces::Session->instance()->getParams();
 	#print Dumper($post->[0]);
 
 	my %hash = (
-		'subcat' => $this->$createList()
+		'subcat' => $this->$createList(),
+		'IdSession' => $session->id()
 	);
 
 	$this->{template} =~ s/%(\w+)%/$hash{$1}/ge;

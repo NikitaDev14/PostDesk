@@ -171,11 +171,26 @@ sub getAllSubcategories ($;)
 	my ($this) = @_;
 	
 	$this->{query} =
-	"SELECT Name FROM subcategories";
+	"SELECT idSubcategory, Name FROM subcategories";
 	
 	$this->$execute();
 
 	return $this->$getResult();
+}
+sub addPost ($$$$;)
+{
+	my ($this, $idUser, $idSubcategory, $text) = @_;
+	$this->{query} =
+	"INSERT INTO posts (idUser, idSubcategory, Text) VALUES (?, ?, ?)";
+	$this->{params} = ();
+	
+	push(@{$this->{params}}, $idUser);
+	push(@{$this->{params}}, $idSubcategory);
+	push(@{$this->{params}}, $text);
+	
+	$this->$execute();
+	
+	return  $this;
 }
 
 1;

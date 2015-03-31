@@ -1,5 +1,5 @@
 		<div class="container">
-			<form action="addpost" method="get">
+			<form action="addpost" method="post">
 				<select name="subcategory" class="menu">
 					%subcat%
 				</select>
@@ -7,6 +7,7 @@
 				<textarea name="text" required></textarea>
 				</br>
 				<input type="submit" value="Add"/>
+				<input type="hidden" name="IdSession" value="%IdSession%"/>
 			</form>
 		</div>
 	</body>

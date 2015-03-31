@@ -9,7 +9,7 @@ use Models::Utilities::DataContainer;
 use Models::Interfaces::Database;
 use Models::Interfaces::Http;
 use Models::Validators::LoginFormValidator;
-#use Models::Interfaces::Session;
+use Models::Interfaces::Session;
 use Data::Dumper;
 
 sub new ($$;)
@@ -50,7 +50,7 @@ sub run ($;)
 		}
 		else
 		{
-			#Models::Interfaces::Session->instance()->sessionStart($result, $ENV{REMOTE_ADDR});
+			Models::Interfaces::Session->instance()->sessionStart($result, $ENV{REMOTE_ADDR}, $params->{IdSession});
 			$nextPage = 'profile';
 			$content = @$result[0]->{idUser};
 		}

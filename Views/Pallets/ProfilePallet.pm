@@ -3,10 +3,12 @@ package Views::Pallets::ProfilePallet;
 our @ISA = qw(BasePallet);
 
 use strict;
-use Views::Pallets::BasePallet;
-use Models::Interfaces::Database;
 use config;
 use Data::Dumper;
+
+use Views::Pallets::BasePallet;
+use Models::Interfaces::Database;
+use Models::Interfaces::Session;
 
 sub new ($$$;)
 {
@@ -42,6 +44,7 @@ sub change ($;)
 	my ($this) = @_;
 	
 	my $profile = Models::Interfaces::Database->new(%config::config)->connect()->getProfile($this->{user});
+	my $session = Models::Interfaces::Session->instance()->getParams();
 	
 	#print Dumper($post->[0]);
 
@@ -50,7 +53,8 @@ sub change ($;)
 		'Surname' => $profile->[0]{SurName},
 		'Phone' => $profile->[0]{Phone},
 		'Email' => $profile->[0]{Email},
-		'posts' => $this->$createList()
+		'posts' => $this->$createList(),
+		'IdSession' => $session->id()
 	);
 
 	$this->{template} =~ s/%(\w+)%/$hash{$1}/ge;

@@ -1,70 +1,74 @@
 package Models::Interfaces::Session;
 
 use strict;
+use lib qw/libs/;
 use CGI::Session;
 use CGI;
 use Models::Interfaces::Database;
+use Data::Dumper;
 
 my $self;
 
-sub instance
+sub instance ($;)
 {
 	my $class = ref($_[0])||$_[0];
-	$self ||= bless(
-	{
-		'params' => undef
-	}, $class);
+	
+	$self ||= bless({}, $class);
 
 	return $self;
 }
-sub sessionStart
-{
-	my ($self, $user, $ip) = @_;
 
-	my $cgi = new CGI;
-	my $session = new CGI::Session(undef, $cgi, {Directory=>'/tmp'});
+sub sessionStart ($$$;$)
+{
+	my ($self, $idUser, $ipUser, $idSession)= @_;
 	
-	if ($session->param("~logged-in"))
+	my $cgi = new CGI;
+	my $session;
+	
+	if($idSession eq undef)
 	{
-        return 1;  # if logged in, don't bother going further
-    }
-
-    my $user_mail = $cgi->param("user_mail ") or return;
-    my $user_pass = $cgi->param("user_pass") or return;
-
-    # if we came this far, user did submit the login form
-    # so let's try to load his/her profile if name/psswds match
-    if ( my $profile = _load_profile($user_mail, $user_pass))
-    {
-        $session->param("~profile", $profile);
-        $session->param("~logged-in", 1);
-        return 1;
-    }
-}
-sub getParams
-{
-	my ($self) = @_;
-
-	return $self->{params};
-}
-sub load_profile
-{
-    my ($user_mail, $user_pass) = @_;
-
-	$query = Models::Interfaces::Database->getUser($user_mail, $user_pass);
-	unless($query)
-	{
-		return undef;
+		$session = CGI::Session->new(undef, $idSession, {'Directory' => '/home/user10/public_html/perl/PostDesk/sessions'});
 	}
-	else
+	#my $s = CGI::Session->load();
+
+	
+	
+	#print Dumper($session);
+	$self->{'session'} = $session;
+	
+	if($idUser ne undef)
 	{
-		return 1;
+		$self->{'session'}->param("user", $idUser->[0]{idUser});
 	}
+	if($ipUser ne undef)
+	{
+		$self->{'session'}->param("ip", $ipUser);
+	}
+	
+	$self->{'session'}->flush();
+	
+	#print Dumper($self->{session}{_DATA}{user});
+
+	return $self;  # if logged in, don't bother going further
 }
-sub sessionDestroy
+
+sub getParams ($;)
 {
-	my $session = CGI::Session->load() ;
-	$session->clear(["~logged-in"]);
+	my ($self)=@_;
+	
+	return $self->{'session'};
+}
+
+sub sessionDestroy ($;)
+{
+	my ($self)=@_;
+	
+    $self->{'session'}->delete();
+	
+    return 1;
+	
+	#my $session = CGI::Session->load() ;
+	#$session->clear(["~logged-in"]);
 	#$session->delete();  или это или то
 }
 

@@ -8,7 +8,9 @@ use Controllers::PageControllers::BaseController;
 use Models::Utilities::DataContainer;
 use Models::Interfaces::Database;
 use Models::Interfaces::Http;
-#use Models::Interfaces::Session;
+use Models::Interfaces::Session;
+use Models::Validators::SessionValidator;
+use config;
 use Data::Dumper;
 
 sub new ($$;)
@@ -27,35 +29,36 @@ sub run ($;)
 
 	my $dataContainer = Models::Utilities::DataContainer->instance();
 	my $params = Models::Interfaces::Http->instance()->readForm()->getParams();
+	my $session = Models::Interfaces::Session->instance()->sessionStart(undef, undef, $params->{IdSession});
+	my $user = $session->getParams()->{_DATA}{user};
+	
+	#print Dumper($session);
+	
 	my ($nextPage, $content);
 
 	if($params->{subcategory} eq undef || $params->{text} eq undef)
 	{
 		$nextPage = 'addpost';
-		$content = 'addpost';
+		$content = $user;
 	}
 	else
 	{
-		my $validator = Models::Validators::LoginFormValidator->instance();
-		
-		$validator->setParams($params);
+		my $validator = Models::Validators::SessionValidator->instance();
 
-		my $result = $validator->isValidForm();
+		my $result = $validator->isValidSession();
 		
-
-		if (!@$result)
+		if (!$result)
 		{
-			$nextPage = 'addpost';
-			$content = 'addpost';
+			$nextPage = 'login';
+			$content = 'login';
 		}
 		else
 		{
-			#Models::Interfaces::Session->instance()->sessionStart($result, $ENV{REMOTE_ADDR});
-			$nextPage = 'addpost';
-			$content = 'addpost';
+			Models::Interfaces::Database->new(%config::config)->connect()->addPost($user, $params->{subcategory}, $params->{text});
+			$nextPage = 'profile';
+			$content = $user;
 		}
 	}
-
 
 	$dataContainer->setParams({'nextPage' => $nextPage, 'content' => $content});
 }

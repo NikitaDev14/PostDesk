@@ -11,7 +11,10 @@
 				<ul class="menu" >
 					%posts%
 			  	</ul>
-			  	<a href="addpost">Add post</a>
+			  	<form class="bdrform_tabl" action="addpost" method="post">
+					<input type="hidden" name="IdSession" value="%IdSession%"/>
+					<input type="submit" style="border-radius: 10px" value="Add post"/>
+				</form>
 			</div>
 		</div>
 	</body>
